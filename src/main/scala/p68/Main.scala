@@ -26,18 +26,22 @@ object Main extends App{
   }
 
   object Ngon{
+    var cache:Map[Int, IntMatrix] = Map()
     def makeConnectedMatrix(N:Int) = {
-      val ZERO = Vector(0) * N
-      new IntMatrix(Vector() ++
-        (0 until N).map(i => ZERO.updated(i, 1).updated(if((i-1)<0) N-1 else i-1, 1)) ++
-        (0 until N).map(i => ZERO.updated(i, 1)))
+      if(!cache.contains(N)){
+        val ZERO = Vector(0) * N
+        cache += (N -> new IntMatrix(Vector() ++
+          (0 until N).map(i => ZERO.updated(i, 1).updated(if ((i - 1) < 0) N - 1 else i - 1, 1)) ++
+          (0 until N).map(i => ZERO.updated(i, 1)))
+          )
+      }
+      cache(N)
     }
 
     private def parseNgon(n:String):IndexedSeq[Int] = {
       val parts:Array[Array[Int]] = n.split(";").map(_.split(",").map(_.trim.toInt))
       val ext:IndexedSeq[Int] = parts.map(_(0))
       val int:IndexedSeq[Int] = parts.map(_(1))
-      //println(int ++ ext)
       int ++ ext
     }
 
@@ -77,10 +81,10 @@ object Main extends App{
     }
   }
 
-  val m = (1 to 10).toIndexedSeq.permutations.map(int =>{
-    new Ngon(int)// ++ ext)
-  }).filter(ngon => ngon.isValid && ngon.toEmptyString.length == 16).maxBy(_.toEmptyString.toLong)
+  val m = (1 to 10).toIndexedSeq.permutations.map(new Ngon(_))
+    .filter(ngon => ngon.isValid && ngon.toEmptyString.length == 16).maxBy(_.toEmptyString.toLong)
 
+  println(m)
   println(m.toEmptyString)
 
 
