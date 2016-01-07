@@ -50,6 +50,7 @@ object Main extends App {
     isBackAcceptable(str)
   }).map(_._2).find(n =>{
     println(s"n:$n")
+
     val Fn = fastFib(n)
     isFrontAcceptable(Fn.toString)
   })

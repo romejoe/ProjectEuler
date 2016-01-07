@@ -25,4 +25,21 @@ trait Matrix[T] {
 
   override def toString(): String = backing.map(_.mkString(",")).mkString(System.lineSeparator())
 
+  def canEqual(a:Any) = a.isInstanceOf[Matrix[T]]
+
+  override def equals(a:Any):Boolean = {
+    val m = a.asInstanceOf[Matrix[T]]
+    if(dimensions != m.dimensions)
+      false
+    else{
+      val (xlim, ylim) = dimensions
+
+      (for(
+        x <- 0 until xlim;
+        y <- 0 until ylim
+        ) yield apply(x,y) == m(x,y))
+        .forall(b => b)
+    }
+
+  }
 }

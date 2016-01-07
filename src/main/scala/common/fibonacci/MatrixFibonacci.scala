@@ -13,8 +13,6 @@ class MatrixFibonacci {
     import MatrixFibonacci._
     var cache:Map[Int, NumericMatrix[BigInt]] = Map(1->(BigFib^1))
     def apply(n:Int):BigInt = {
-      //val maxCached:Int = cache.keySet.max
-      //val toCompute:Int = n - maxCached
       val elems = new BitSet1(n.toLong)
       val newMax = elems.map(1<<_).foldLeft(Identity)((r, i) =>{
         if(!cache.contains(i)){

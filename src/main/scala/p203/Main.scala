@@ -17,7 +17,7 @@ object Main extends App {
 
 
   def isSquareFree(l:Long):Boolean = {
-    l
+    //l
     false
   }
 

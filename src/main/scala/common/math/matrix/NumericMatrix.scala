@@ -43,7 +43,6 @@ trait NumericMatrix[@specialized T] extends Matrix[T] {
     else
       (this ^ 2) ^ (i / 2)
   }
-
 }
 
 class DoubleMatrix(back: IndexedSeq[IndexedSeq[Double]]) extends NumericMatrix[Double] {
@@ -72,3 +71,6 @@ class BigIntMatrix(back: IndexedSeq[IndexedSeq[BigInt]]) extends NumericMatrix[B
 
   override def cloneWith(backing: IndexedSeq[IndexedSeq[BigInt]]): NumericMatrix[BigInt] = new BigIntMatrix(backing)
 }
+
+
+
