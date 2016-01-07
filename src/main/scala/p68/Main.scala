@@ -19,63 +19,69 @@ object Main extends App{
     value
   }
 
-  abstract class GonNode
-  case class InnerGon(var exterior:ExteriorGon, var right:InnerGon, var value:Int) extends GonNode
-  case class ExteriorGon(var anchor:InnerGon, var value:Int) extends GonNode
-
-  class NgonBuilder(N:Int){
-    val exteriorNodeList = makeN(N)(ExteriorGon(null, 0))
-    val innerNodeList = makeN(N)(InnerGon(null, null, 0))
-    exteriorNodeList.zip(innerNodeList)
-        .foreach({case (exterior, inner) =>
-          exterior.anchor = inner
-          inner.exterior = exterior
-        })
-  }
-
-  val A = new IntMatrix(Vector(Vector(3,2,1,4,6,5)))
-  val old_connected = new IntMatrix(Vector(
-    Vector(0, 1, 1, 1, 0, 0),
-    Vector(1, 0, 1, 0, 1, 0),
-    Vector(1, 1, 0, 0, 0, 1),
-    Vector(1, 0, 0, 0, 0, 0),
-    Vector(0, 1, 0, 0, 0, 0),
-    Vector(0, 0, 1, 0, 0, 0)
-  ))
-
-  val connected = new IntMatrix(Vector(
-    Vector(1, 0, 1),
-    Vector(1, 1, 0),
-    Vector(0, 1, 1),
-    Vector(1, 0, 0),
-    Vector(0, 1, 0),
-    Vector(0, 0, 1)
-  ))
-
-  println(s"A:\n$A")
-  println(s"connected:\n$connected")
-  println(s"A*connected:\n${A*connected}")
-
-  val int = new IntMatrix(Vector(Vector(3,2,1)))
-  val ext = new IntMatrix(Vector(Vector(4,6,5)))
-
   implicit class RichIndexedSeq[T](i:IndexedSeq[T]){
     def *(n:Int):IndexedSeq[T]={
       (0 until n).foldLeft(Vector[T]())((a,b) => a++i)
     }
   }
 
-  def makeConnectedMatrix(N:Int) = {
-    val ZERO = Vector(0) * N
-    new IntMatrix(Vector() ++
-      (0 until N).map(i => ZERO.updated(i, 1).updated(if((i-1)<0) N-1 else i-1, 1)) ++
-      (0 until N).map(i => ZERO.updated(i, 1)))
+  object Ngon{
+    def makeConnectedMatrix(N:Int) = {
+      val ZERO = Vector(0) * N
+      new IntMatrix(Vector() ++
+        (0 until N).map(i => ZERO.updated(i, 1).updated(if((i-1)<0) N-1 else i-1, 1)) ++
+        (0 until N).map(i => ZERO.updated(i, 1)))
+    }
+
+    private def parseNgon(n:String):IndexedSeq[Int] = {
+      val parts:Array[Array[Int]] = n.split(";").map(_.split(",").map(_.trim.toInt))
+      val ext:IndexedSeq[Int] = parts.map(_(0))
+      val int:IndexedSeq[Int] = parts.map(_(1))
+      //println(int ++ ext)
+      int ++ ext
+    }
+
   }
 
-  println(makeConnectedMatrix(3))
 
-  println(connected == makeConnectedMatrix(3))
-  println()
-  println(makeConnectedMatrix(5))
+  class Ngon(config:IndexedSeq[Int]) extends IntMatrix(Vector(config)){
+    val N = config.length / 2
+
+    def this(n:Int) = this(Vector(0)*2*n)
+    def this(n:String) = this(Ngon.parseNgon(n))
+
+    val connectionMatrix = Ngon.makeConnectedMatrix(N)
+
+    def isValid:Boolean = {
+      val tmp = this * connectionMatrix
+      val res = tmp.row(0).sliding(2).forall(seq => seq(0) == seq(1))
+      res
+    }
+
+    def sum:Int = {
+      (this*connectionMatrix)(0,0)
+    }
+
+    def toEmptyString:String = toString.replace(";","").replace(",","")
+
+
+    override def toString():String = {
+      val ext = config.drop(N)
+      val start = ext.zipWithIndex.minBy(_._1)._2
+      val pairs = (0 until N).map(i => {
+        val idx = (start + i) % N
+        Seq(config(N + idx), config(idx), config((idx + 1) % N))
+      })
+
+      pairs.map(p => p.mkString(",")).mkString(";")
+    }
+  }
+
+  val m = (1 to 10).toIndexedSeq.permutations.map(int =>{
+    new Ngon(int)// ++ ext)
+  }).filter(ngon => ngon.isValid && ngon.toEmptyString.length == 16).maxBy(_.toEmptyString.toLong)
+
+  println(m.toEmptyString)
+
 
 }

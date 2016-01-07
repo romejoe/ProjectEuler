@@ -13,4 +13,5 @@ object Main extends App{
 
   println(sumIt(Seq(3,5), 10))
   println(sumIt(Seq(3,5), 1000))
+
 }
