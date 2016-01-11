@@ -28,5 +28,46 @@ object Prime {
     }
   }
 
+  def isSquare(l:Long):Boolean = naiveIsSquare(l)
+
+  def naiveIsSquare(l:Long):Boolean = {
+    val tmp:Long = Math.sqrt(l).toLong
+    tmp*tmp == l
+  }
+
+  @Experimental
+  def digitalRoot(l:Long):Int = {
+    if(l < 10)
+      l.toInt
+    else{
+      digitalRoot(l.toString.toList.map(_.toString.toInt).sum)
+    }
+  }
+
+  @Experimental
+  def fastIsSquare(l:Long):Boolean =
+    l & 11 match{
+      case 2|3|7|8 => false
+      case _ =>{
+        digitalRoot(l) match{
+          case 0|1|4|7|9 =>{
+            naiveIsSquare(l)
+          }
+          case _ => false
+        }
+      }
+    }
+
+  def gcd(a:Long, b:Long):Long = euclideanGCD(a,b)
+
+  def euclideanGCD(a: Long, b: Long): Long = {
+    val r_0 = math.max(a,b)
+    val r_1 = math.min(a,b)
+    val r_2 = r_0 % r_1
+    if(r_2 == 0)
+      r_0 / (r_0/r_1)
+    else
+      euclideanGCD(r_1,r_2)
+  }
 
 }
