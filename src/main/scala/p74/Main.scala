@@ -68,66 +68,8 @@ How many chains, with a starting number below one million, contain exactly sixty
   //fill factorial cache
   (1 to 9).map(_!)
 
-  def ComputeChain(i:Int):mutable.Map[Int, Int] = {
-    val ret:mutable.Map[Int, Int] = mutable.Map()
-    var cur = i
-    var idx = 0
-    while(!ret.contains(cur)){
-      ret += (cur -> idx)
-      cur += F(cur)
-      idx += 1
-    }
-
-    ret
-  }
-
-  val chains:mutable.Map[Int,List[Int]] = mutable.Map()
-  chains ++= 0.to(9,1).map(i => i -> List(i))
-/*
-  abstract class ChainTarget{
-    def target:ChainTarget
-    def value:Int
-  }
-  case class FutureTarget(i:Int) extends ChainTarget{
-    def target = RawTarget(i)
-
-  }
-  case class RawTarget(i:Int) extends ChainTarget{
-    def value = chains(i)
-  }
-
-
-
-  def ComputeChain2(i:Int):List[Int] = {
-    if(chains.contains(i))
-      if(chains(i) == Nil)
-        FutureTarget(i)
-      else
-
-      chains(i)
-    else{
-      chains += (i -> Nil)
-      val chain = i :: ComputeChain2(F(i))
-      chains += (i -> chain)
-      chain
-    }
-  }
-*/
-  def printChain(chain:mutable.Map[Int,Int]):Unit = {
-    println(chain.toArray.sortBy(_._2).map(_._1).mkString(" -> "))
-  }
-
-  def printChain2(chain:List[Int]):Unit = {
-    println(chain.mkString(" -> "))
-  }
-
-  //val chainCount = (0 until 1000000).map(ComputeChain2).count(_.length == 59)
-  //println(s"Chaincount => $chainCount")
   val chainBlocks:mutable.Map[Int, Int] = mutable.Map()
 
-  /*(0 until 1000000).foreach(i => {
-    chainBlocks.+= (i ->F(i))
-  })*/
 
   def computeChainBlocks():Unit = {
     val queue = mutable.Queue[Int]()
@@ -153,5 +95,5 @@ How many chains, with a starting number below one million, contain exactly sixty
   }
   computeChainBlocks()
   val chainCount = (0 until 1000000).par.map(computeChainSetFromBlocks).count(_.size == 60)
-  println(s"Chaincount => $chainCount")
+  println(s"Chain count => $chainCount")
 }
