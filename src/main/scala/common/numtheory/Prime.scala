@@ -94,4 +94,47 @@ object Prime {
       euclideanGCD(r_1, r_2)
   }
 
+  /**
+    * Taken from: https://en.wikipedia.org/wiki/Binary_GCD_algorithm
+    * @param a
+    * @param b
+    * @return
+    */
+  def binaryGcd(a:Long, b:Long): Long = {
+    require(a>=0 && b >= 0)
+    val ret = if(a == 0)
+      b
+    else if(b == 0)
+      a
+    else {
+      var (u, v) = (a, b)
+      var shift = 0
+      while (((u | v) & 1) == 0) {
+        u >>= 1
+        v >>= 1
+        shift += 1
+      }
+
+      while ((u & 1) == 0) {
+        u >>= 1
+      }
+      do {
+        while ((v & 1) == 0)
+          v >>= 1
+        if (u > v) {
+          val t = v
+          v = u
+          u = t
+        }
+        v -= u
+      } while (v != 0)
+
+
+      u << shift
+    }
+
+    ret
+  }
+
 }
+
