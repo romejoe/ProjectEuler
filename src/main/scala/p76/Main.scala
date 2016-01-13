@@ -1,41 +1,36 @@
 package p76
 
 import common.TimedApp
-import common.numtheory.Prime
 import common.util.Memonize
 
 object Main extends TimedApp {
   /*
-It is possible to write ten as the sum of primes in exactly five different ways:
+It is possible to write five as a sum in exactly six different ways:
 
-7 + 3
-5 + 5
-5 + 3 + 2
-3 + 3 + 2 + 2
-2 + 2 + 2 + 2 + 2
+4 + 1
+3 + 2
+3 + 1 + 1
+2 + 2 + 1
+2 + 1 + 1 + 1
+1 + 1 + 1 + 1 + 1
 
-What is the first value which can be written as the sum of primes in over five thousand different ways?
+How many different ways can one hundred be written as a sum of at least two positive integers?
   */
+   val F:(Long,Long) => Long = Memonize((i:Long, max:Long) => {
 
-  val getPrimes = Memonize((l:Long) => Prime.lessThanEqual(l))
+     val domain = math.min(i,max).to(1L, -1)
+      domain.filter(i-_ >= 0).map(s => {
+       if (i - s == 0)
+         1
+       else {
+         F(i - s, s)
+       }
+     }).sum
 
-  val F:(Long,Long) => Set[List[Long]] = Memonize((i:Long, max:Long) => {
-    val primes = getPrimes(math.min(i,max))
+   })
 
-    val ret:Set[List[Long]] = primes.flatMap(s => {
-      if (i - s == 0)
-        Set(List(s))
-      else {
-        val subs = F(i - s, s)
-        subs.map(s :: _)
-      }
-    }).toSet
-
-    ret
-  })
-
-  val f = (N:Long) => F(N,N)
-  val i = (2 to Int.MaxValue).find(i => f(i).size > 5000)
+  val f = (N:Long) => F(N, N)
+  val i = f(100) - 1
   println(s"i => $i")
 
 }
