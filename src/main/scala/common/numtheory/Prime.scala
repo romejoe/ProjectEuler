@@ -1,25 +1,49 @@
 package common.numtheory
 
 object Prime {
-  var primes:Set[Long] = Set(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997)
-  var notPrimes:Set[Long] = Set()
+  def lessThan(i: Long): List[Long] = {
+    i match {
+
+      case _ if i <= 1000 => primes.toSeq.sorted.toList.takeWhile(_ < i)
+      case _ =>
+        if (isPrime(i - 1))
+          (i - 1) :: lessThan(i - 1)
+        else
+          lessThan(i - 1)
+    }
+  }
+
+  def lessThanEqual(i: Long): List[Long] = {
+    i match {
+      case 1 => List()
+      case _ if i <= 1000 => primes.toSeq.sorted.toList.takeWhile(_ <= i)
+      case _ =>
+        if (isPrime(i))
+          i :: lessThanEqual(i - 1)
+        else
+          lessThan(i)
+    }
+  }
+
+  var primes: Set[Long] = Set(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997)
+  var notPrimes: Set[Long] = Set()
 
 
-  def isPrime(i:Long):Boolean = {
+  def isPrime(i: Long): Boolean = {
     require(i > 0)
-    if(i == 1)
+    if (i == 1)
       true
-    else if(primes.contains(i) || notPrimes.contains(i)) {
+    else if (primes.contains(i) || notPrimes.contains(i)) {
       primes.contains(i)
-    }else {
-      val sqrt = math.sqrt(i).floor.toInt
-      if(primes.max < sqrt){
+    } else {
+      val sqrt = math.sqrt(i).toLong
+      if (primes.max < sqrt) {
         (primes.max to sqrt).filterNot(notPrimes.contains).foreach(isPrime)
       }
 
       val toTest = primes.filter(_ <= sqrt)
       val result = toTest.forall(i % _ != 0)
-      if(result) {
+      if (result) {
         primes = primes + i
       } else {
         notPrimes = notPrimes + i
@@ -28,29 +52,29 @@ object Prime {
     }
   }
 
-  def isSquare(l:Long):Boolean = naiveIsSquare(l)
+  def isSquare(l: Long): Boolean = naiveIsSquare(l)
 
-  def naiveIsSquare(l:Long):Boolean = {
-    val tmp:Long = Math.sqrt(l).toLong
-    tmp*tmp == l
+  def naiveIsSquare(l: Long): Boolean = {
+    val tmp: Long = Math.sqrt(l).toLong
+    tmp * tmp == l
   }
 
   @Experimental
-  def digitalRoot(l:Long):Int = {
-    if(l < 10)
+  def digitalRoot(l: Long): Int = {
+    if (l < 10)
       l.toInt
-    else{
+    else {
       digitalRoot(l.toString.toList.map(_.toString.toInt).sum)
     }
   }
 
   @Experimental
-  def fastIsSquare(l:Long):Boolean =
-    l & 11 match{
-      case 2|3|7|8 => false
-      case _ =>{
-        digitalRoot(l) match{
-          case 0|1|4|7|9 =>{
+  def fastIsSquare(l: Long): Boolean =
+    l & 11 match {
+      case 2 | 3 | 7 | 8 => false
+      case _ => {
+        digitalRoot(l) match {
+          case 0 | 1 | 4 | 7 | 9 => {
             naiveIsSquare(l)
           }
           case _ => false
@@ -58,16 +82,16 @@ object Prime {
       }
     }
 
-  def gcd(a:Long, b:Long):Long = euclideanGCD(a,b)
+  def gcd(a: Long, b: Long): Long = euclideanGCD(a, b)
 
   def euclideanGCD(a: Long, b: Long): Long = {
-    val r_0 = math.max(a,b)
-    val r_1 = math.min(a,b)
+    val r_0 = math.max(a, b)
+    val r_1 = math.min(a, b)
     val r_2 = r_0 % r_1
-    if(r_2 == 0)
-      r_0 / (r_0/r_1)
+    if (r_2 == 0)
+      r_0 / (r_0 / r_1)
     else
-      euclideanGCD(r_1,r_2)
+      euclideanGCD(r_1, r_2)
   }
 
 }
