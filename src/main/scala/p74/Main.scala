@@ -3,7 +3,7 @@ package p74
 import common.TimedApp
 
 import scala.collection.mutable
-
+import common.RicherInt
 object Main extends TimedApp {
   /*
 The number 145 is well known for the property that the sum of the factorial of its digits is equal to 145:
@@ -26,42 +26,7 @@ Starting with 69 produces a chain of five non-repeating terms, but the longest n
 
 How many chains, with a starting number below one million, contain exactly sixty non-repeating terms?
   */
-  object RicherInt{
-    val factorialCache:scala.collection.mutable.Map[Int,Int] = mutable.Map()
-  }
-  implicit class RicherInt(i:Int){
-    import RicherInt._
-    def ! :Int = {
-      if (!factorialCache.contains(i))
-        factorialCache += (i -> (i match {
-          case 0 | 1 => 1
-          case _ => i * ((i - 1)!)
-        }))
-      factorialCache(i)
-    }
 
-    def toDigits:Seq[Int] = toDigits(10)
-    def toHexDigits:Seq[Int] = {
-      var ret:Seq[Int] = Seq()
-      var j = i
-      while (j > 0){
-        ret = ret.+:(j&0xF)
-        j = j >> 4
-      }
-      ret
-    }
-
-    def toDigits(radix:Int):Seq[Int] = {
-      var ret:Seq[Int] = Seq()
-      var j = i
-      while (j > 0){
-        ret = ret.+:(j%radix)
-        j = j / radix
-      }
-      ret
-    }
-
-  }
 
   def F(i:Int):Int = i.toDigits.map(_!).sum
 

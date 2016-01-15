@@ -1,9 +1,10 @@
 package common.math.matrix
 
-trait Matrix[T] {
+trait Matrix[T, S <: Matrix[T,S]] { self: S =>
+
   val backing: IndexedSeq[IndexedSeq[T]]
 
-  def cloneWith(backing: IndexedSeq[IndexedSeq[T]]): Matrix[T]
+  def cloneWith(backing: IndexedSeq[IndexedSeq[T]]): S
 
   def apply(x: Int, y: Int) = backing(x)(y)
 
@@ -17,18 +18,18 @@ trait Matrix[T] {
 
   def col(y: Int): IndexedSeq[T] = backing.map(_ (y))
 
-  def transpose: Matrix[T] = cloneWith(backing.transpose)
+  def transpose: S = cloneWith(backing.transpose)
 
-  def updated(x: Int, y: Int, v: T): Matrix[T] = updated((x, y, v))
+  def updated(x: Int, y: Int, v: T): S = updated((x, y, v))
 
-  def updated(v: (Int, Int, T)*): Matrix[T] = cloneWith(v.foldLeft(backing)((m, p) => m.updated(p._1, m(p._1).updated(p._2, p._3))))
+  def updated(v: (Int, Int, T)*): S = cloneWith(v.foldLeft(backing)((m, p) => m.updated(p._1, m(p._1).updated(p._2, p._3))))
 
   override def toString(): String = backing.map(_.mkString(",")).mkString(System.lineSeparator())
 
-  def canEqual(a:Any) = a.isInstanceOf[Matrix[T]]
+  def canEqual(a:Any) = a.isInstanceOf[S]
 
   override def equals(a:Any):Boolean = {
-    val m = a.asInstanceOf[Matrix[T]]
+    val m = a.asInstanceOf[S]
     if(dimensions != m.dimensions)
       false
     else{

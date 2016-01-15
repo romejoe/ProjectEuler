@@ -1,27 +1,30 @@
 package common.math.matrix
 
-abstract class NumericMatrix[@specialized T:Numeric] extends Matrix[T] {
+abstract class NumericMatrix[@specialized T:Numeric, S <: NumericMatrix[T,S]] extends Matrix[T, S] { self: S =>
+
   //implicit val num: Numeric[T]
+  //type U <: NumericMatrix[T]
+  //self: U =>
 
   private def plus(x:T, y:T) = implicitly[Numeric[T]] plus(x,y)
   private def minus(x:T, y:T) = implicitly[Numeric[T]] minus(x,y)
   private def times(x:T, y:T) = implicitly[Numeric[T]] times(x,y)
 
-  def cloneWith(backing: IndexedSeq[IndexedSeq[T]]): NumericMatrix[T]
+  //def cloneWith(backing: IndexedSeq[IndexedSeq[T]]):
 
-  def +(m: NumericMatrix[T]): NumericMatrix[T] = {
+  def +(m: S): S = {
     require(dimensions == m.dimensions)
     val back: IndexedSeq[IndexedSeq[T]] = backing.zip(m.backing).map(p => p._1.zip(p._2).map(p2 => plus(p2._1, p2._2)))
     cloneWith(back)
   }
 
-  def -(m: NumericMatrix[T]): NumericMatrix[T] = {
+  def -(m: S): S = {
     require(dimensions == m.dimensions)
     val back: IndexedSeq[IndexedSeq[T]] = backing.zip(m.backing).map(p => p._1.zip(p._2).map(p2 => minus(p2._1, p2._2)))
     cloneWith(back)
   }
 
-  def *(m: NumericMatrix[T]): NumericMatrix[T] = {
+  def *(m: S): S = {
     val result: IndexedSeq[IndexedSeq[T]] =
       (for (row <- rows) yield {
         val tmp = for (col <- m.cols) yield {
@@ -37,7 +40,7 @@ abstract class NumericMatrix[@specialized T:Numeric] extends Matrix[T] {
     ret
   }
 
-  def ^(i: Int): NumericMatrix[T] = {
+  def ^(i: Int): S = {
     if (i == 1)
       this
     else if (i == 2)
@@ -49,37 +52,37 @@ abstract class NumericMatrix[@specialized T:Numeric] extends Matrix[T] {
   }
 }
 
-class DoubleMatrix(back: IndexedSeq[IndexedSeq[Double]]) extends NumericMatrix[Double] {
+class DoubleMatrix(back: IndexedSeq[IndexedSeq[Double]]) extends NumericMatrix[Double, DoubleMatrix] { //self: S =>
   override val backing: IndexedSeq[IndexedSeq[Double]] = back
 
   def this(x: Int, y: Int) = this(Array.ofDim[Double](x, y).map(_.toIndexedSeq).toIndexedSeq)
 
-  override def cloneWith(backing: IndexedSeq[IndexedSeq[Double]]): NumericMatrix[Double] = new DoubleMatrix(backing)
+  override def cloneWith(backing: IndexedSeq[IndexedSeq[Double]]):DoubleMatrix = new DoubleMatrix(backing)
 }
 
-class IntMatrix(back: IndexedSeq[IndexedSeq[Int]]) extends NumericMatrix[Int] {
+class IntMatrix(back: IndexedSeq[IndexedSeq[Int]]) extends NumericMatrix[Int, IntMatrix] {
   override val backing: IndexedSeq[IndexedSeq[Int]] = back
 
   def this(x: Int, y: Int) = this(Array.ofDim[Int](x, y).map(_.toIndexedSeq).toIndexedSeq)
 
-  override def cloneWith(backing: IndexedSeq[IndexedSeq[Int]]): NumericMatrix[Int] = new IntMatrix(backing)
+  override def cloneWith(backing: IndexedSeq[IndexedSeq[Int]]): IntMatrix = new IntMatrix(backing)
 }
 
-class BigIntMatrix(back: IndexedSeq[IndexedSeq[BigInt]]) extends NumericMatrix[BigInt] {
+class BigIntMatrix(back: IndexedSeq[IndexedSeq[BigInt]]) extends NumericMatrix[BigInt, BigIntMatrix] {
   override val backing: IndexedSeq[IndexedSeq[BigInt]] = back
 
   def this(x: Int, y: Int) = this(Array.ofDim[BigInt](x, y).map(_.toIndexedSeq).toIndexedSeq)
 
-  override def cloneWith(backing: IndexedSeq[IndexedSeq[BigInt]]): NumericMatrix[BigInt] = new BigIntMatrix(backing)
+  override def cloneWith(backing: IndexedSeq[IndexedSeq[BigInt]]): BigIntMatrix = new BigIntMatrix(backing)
 }
 
-class VectorMatrix[T:Numeric](back: IndexedSeq[IndexedSeq[T]]) extends NumericMatrix[T]{
+class VectorMatrix[T:Numeric](back: IndexedSeq[IndexedSeq[T]]) extends NumericMatrix[T, VectorMatrix[T]]{
   override val backing: IndexedSeq[IndexedSeq[T]] = back
 
-  //def this(x: Int, y: Int) = this(Array.ofDim[T](x, y).map(_.toIndexedSeq).toIndexedSeq)
+//  def this(x: Int, y: Int) = this(Vector.fill[T](x,y)(0.asInstanceOf[T]))//this(Array.ofDim[T](x, y)(ev).map(_.toIndexedSeq).toIndexedSeq)
 
   def this(subs:IndexedSeq[T]*) = this(subs.toIndexedSeq)
 
-  override def cloneWith(backing: IndexedSeq[IndexedSeq[T]]): NumericMatrix[T] = new VectorMatrix[T](backing)
+  override def cloneWith(backing: IndexedSeq[IndexedSeq[T]]): VectorMatrix[T] = new VectorMatrix[T](backing)
 }
 
