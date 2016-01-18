@@ -1,8 +1,10 @@
 package common.numtheory
 
 import Prime.isPrime
+import common.util.Memonize
+
 object Factorize {
-  def naiveFactor(i:Long):Map[Long, Long] = {
+  val naiveFactor:Long => Map[Long, Long] = Memonize((i:Long) => {
     i match{
       case 0 => Map()
       case 1 => Map(1L->1L)
@@ -37,6 +39,6 @@ object Factorize {
         else
           Map(i->1)
     }
-  }
+  })
 
 }

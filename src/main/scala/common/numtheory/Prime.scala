@@ -1,7 +1,76 @@
 package common.numtheory
 
+import common.util.Memonize
+
+import scala.collection.mutable
+
+
+class Prime(N:Int) {
+  val primes = {
+
+    val foundPrimes = mutable.BitSet()
+
+    val is_prime:mutable.BitSet = mutable.BitSet(N) ++ (2 to N)
+
+    def findNextN(i:Int):Int = {
+      var tmp = i+1
+      while(tmp < N && !is_prime.contains(tmp)){
+        tmp += 1
+      }
+      tmp
+    }
+
+    var p = findNextN(1)
+    while(p < N){
+
+      var i = p
+      while(i < N){
+        is_prime -= i
+        i += p
+      }
+      foundPrimes += p
+      p = findNextN(p)
+    }
+
+    foundPrimes
+  }
+
+  /**
+    * Taken from https://gist.github.com/cslarsen/1635288
+    */
+  val EulerTotient:Int=>Int = Memonize((N:Int) => {
+
+    if(primes.contains(N))
+      N-1
+    else {
+      if ((N & 1) == 0) {
+        val m = N >> 1
+        if ((m & 1) == 1)
+          EulerTotient(m)
+        else
+          EulerTotient(m) << 1
+      }
+      else {
+        //(primes.filter(p => p < N && (N%p == 0)).map(1 - 1.0 / _).product*N).toInt
+
+        val m = primes.find(p => N % p == 0).get
+
+        val o = N / m
+        val d = Prime.binaryGcd(m, o).toInt
+
+        if (d == 1)
+          EulerTotient(m) * EulerTotient(o)
+        else
+          EulerTotient(m) * EulerTotient(o) * d / EulerTotient(d)
+      }
+    }
+
+  })
+
+}
+
 object Prime {
-  def lessThan(i: Long): List[Long] = {
+  val lessThan:Long => List[Long] = Memonize((i: Long) => {
     i match {
 
       case _ if i <= 1000 => primes.toSeq.sorted.toList.takeWhile(_ < i)
@@ -11,7 +80,7 @@ object Prime {
         else
           lessThan(i - 1)
     }
-  }
+  })
 
   def lessThanEqual(i: Long): List[Long] = {
     i match {
@@ -96,9 +165,6 @@ object Prime {
 
   /**
     * Taken from: https://en.wikipedia.org/wiki/Binary_GCD_algorithm
-    * @param a
-    * @param b
-    * @return
     */
   def binaryGcd(a:Long, b:Long): Long = {
     require(a>=0 && b >= 0)
@@ -135,6 +201,24 @@ object Prime {
 
     ret
   }
+
+  val EulerTotient: Int => Int = Memonize((N:Int) => {
+
+    if(isPrime(N))
+      N
+    else{
+      if((N & 1) == 0) {
+        EulerTotient(N >> 1) << 1
+      }
+      else {
+        val factors = Factorize.naiveFactor(N).keySet
+
+        //factors.map(p => EulerTotient(math.pow(p._1, p._2).toInt)).product
+        (N * factors.map(1 - 1.0 / _).product).toInt
+      }
+    }
+
+  })
 
 }
 
