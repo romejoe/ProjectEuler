@@ -2,7 +2,7 @@ package common.math
 
 import common.numtheory.Prime
 
-class Rational(val n:Long, val d:Long){
+class Rational(val n:Long, val d:Long) extends Ordered[Rational]{
   def +(i:Long):Rational = this + Rational(i,1)
   def -(i:Long):Rational = this - Rational(i,1)
   def *(i:Long):Rational = this * Rational(i,1)
@@ -17,13 +17,21 @@ class Rational(val n:Long, val d:Long){
   def flip:Rational = Rational(d,n)
 
   override def toString:String = s"$n/$d"
+
+  override def compare(that: Rational): Int = {
+    Rational.compare(this, that)
+  }
 }
 
-object Rational {
+object Rational extends Ordering[Rational]{
   def apply(n:Long):Rational = new Rational(n,1)
   def apply(n:Long,d:Long):Rational = new Rational(n,d)
   def minimize(n: Long, d: Long): Rational = {
     val i = Prime.gcd(n,d)
     Rational(n/i, d/i)
+  }
+
+  override def compare(x: Rational, y: Rational): Int = {
+    (x*y.d).n.compare((y*x.d).n)
   }
 }

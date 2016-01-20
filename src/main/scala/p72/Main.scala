@@ -15,8 +15,6 @@ It can be seen that there are 21 elements in this set.
 
 How many elements would be contained in the set of reduced proper fractions for d ≤ 1,000,000?
   */
-  var t = 0
-
   val primes = new Prime(1000000)
   val Ds = 2 to 1000000
 
