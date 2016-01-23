@@ -24,12 +24,7 @@ NOTE: This is a much more difficult version of Problem 18. It is not possible to
   val rows = lines.map(_.split(" ").map(_.toInt)).toSeq
   val base = rows.head.toIndexedSeq
   val res = rows.tail.foldLeft(base)((b,r) => {
-    //(b :+ 0).zip(b :+ 0).zip(r).map{case(p,i) => i + math.max(p._1, p._2)}
     (r, b :+ 0, 0 +: b).zipped.map({case(i, a, b) => i + math.max(a,b)}).toIndexedSeq
-    /*val tmp1 = (b :+ 0).zip(r).map(p => p._1 + p._2)
-    val tmp2 = (0 +: b).zip(r).map(p => p._1 + p._2)
-
-    null*/
   })
   println(s"Max => ${res.max}")
 
