@@ -4,10 +4,31 @@ package object common {
 
   object RicherInt{
     val factorialCache:scala.collection.mutable.Map[Int,Int] = mutable.Map()
+    val elemCache:scala.collection.mutable.Map[Int, Array[Int]] = mutable.Map()
   }
 
   implicit class RicherInt(i:Int){
     import RicherInt._
+
+    def elems: Array[Int] = {
+      if(!elemCache.contains(i)){
+        var j = 0
+        var tmp = i
+        var ret = List[Int]()
+
+        while(tmp != 0){
+          if((tmp & 1) != 0){
+            ret =  j :: ret
+          }
+          tmp >>= 1
+          j += 1
+        }
+
+        elemCache +=(i -> ret.toArray)
+      }
+      elemCache(i)
+    }
+
     def ! :Int = {
       if (!factorialCache.contains(i))
         factorialCache += (i -> (i match {
