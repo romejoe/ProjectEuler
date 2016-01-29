@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e0ec6863-244b-41a8-a847-d8819dabbf1e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/p103/Main.scala" afterPath="$PROJECT_DIR$/src/main/scala/p103/Main.scala" />
     </list>
     <ignored path="ProjectEuler.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -57,10 +58,11 @@
       <file leaf-file-name="Main.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/p103/Main.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6030246">
-              <caret line="115" column="5" selection-start-line="115" selection-start-column="5" selection-end-line="115" selection-end-column="5" />
+            <state vertical-scroll-proportion="0.8015123">
+              <caret line="120" column="1" selection-start-line="120" selection-start-column="1" selection-end-line="120" selection-end-column="1" />
               <folding>
                 <element signature="e#14#41#0" expanded="true" />
+                <element signature="e#1416#2153#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -1064,12 +1066,12 @@
       <workItem from="1453530854484" duration="3135000" />
       <workItem from="1453613297558" duration="924000" />
       <workItem from="1453762272993" duration="505000" />
-      <workItem from="1453996490818" duration="14789000" />
+      <workItem from="1453996490818" duration="15017000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="282843000" />
+    <option name="totallyTimeSpent" value="283071000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -1576,10 +1578,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/p103/Main.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6030246">
-          <caret line="115" column="5" selection-start-line="115" selection-start-column="5" selection-end-line="115" selection-end-column="5" />
+        <state vertical-scroll-proportion="0.8015123">
+          <caret line="120" column="1" selection-start-line="120" selection-start-column="1" selection-end-line="120" selection-end-column="1" />
           <folding>
             <element signature="e#14#41#0" expanded="true" />
+            <element signature="e#1416#2153#0" expanded="false" />
           </folding>
         </state>
       </provider>

@@ -27,8 +27,6 @@ NOTE: This problem is related to Problem 105 and Problem 106.
 
 object Main extends TimedApp {
 
-
-
   val S:(Array[Int], Int) => Int = Memonize((s, i) =>{
       val tmp = i.elems.map(s(_)).sum
     tmp
@@ -88,7 +86,7 @@ object Main extends TimedApp {
     }
   }
 
-  def findOptimumSS(n:Int):Seq[Int] = {
+  val findOptimumSS:(Int => Seq[Int]) = Memonize((n:Int) => {
     n match {
       case 1 => Seq(1)
       case 2 => Seq(1, 2)
@@ -109,15 +107,15 @@ object Main extends TimedApp {
           val tmp = buildOptimumSS(base, i-base.head,n-1, base.head+1)
           if(tmp.isDefined)
             optimal = tmp.get
-          println(s"Optimal ==> ${optimal.mkString("")}")
+          //println(s"Optimal ==> ${optimal.mkString("")}")
         }
         optimal
       }
     }
-  }
-  (1 to 6).foreach(i => println(findOptimumSS(i).sum))
+  })
+  //(1 to 12).foreach(i => println(s"$i => ${findOptimumSS(i)}"))
 
   val opt = findOptimumSS(7)
-  println(s"Optimum => $opt")
+  println(s"Optimum => ${opt.mkString("")}")
 
 }
