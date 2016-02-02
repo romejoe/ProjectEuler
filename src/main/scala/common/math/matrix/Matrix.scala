@@ -28,6 +28,21 @@ trait Matrix[T, S <: Matrix[T,S]] { self: S =>
 
   def canEqual(a:Any) = a.isInstanceOf[S]
 
+  def swapRows(i:Int, j:Int) = {
+    val tmp = row(i)
+    cloneWith(backing.updated(i, row(j)).updated(j, tmp))
+  }
+
+  def removeRow(n:Int) = cloneWith(backing.take(n) ++ backing.drop(n+1))
+
+  def removeCol(n:Int) = cloneWith(backing.map(r => r.take(n) ++ r.drop(n+1)))
+
+  def subMatrix(offset: (Int, Int), size: (Int, Int)) = {
+    cloneWith(backing.drop(offset._1).take(size._1).map(r => r.drop(offset._2).take(size._2)))
+  }
+
+  def appendColumns(m:S) = cloneWith(backing.zip(m.backing).map(p => p._1 ++ p._2))
+
   override def equals(a:Any):Boolean = {
     val m = a.asInstanceOf[S]
     if(dimensions != m.dimensions)

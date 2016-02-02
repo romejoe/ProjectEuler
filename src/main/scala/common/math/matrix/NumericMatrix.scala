@@ -2,15 +2,20 @@ package common.math.matrix
 
 abstract class NumericMatrix[@specialized T:Numeric, S <: NumericMatrix[T,S]] extends Matrix[T, S] { self: S =>
 
-  //implicit val num: Numeric[T]
-  //type U <: NumericMatrix[T]
-  //self: U =>
+  private implicit class Tp(t:T){
+    def +(s:T):T = implicitly[Numeric[T]] plus(t,s)
+    def -(s:T):T = implicitly[Numeric[T]] minus(t,s)
+    def *(s:T):T = implicitly[Numeric[T]] times(t,s)
+    def toDouble:Double = implicitly[Numeric[T]] toDouble(t)
 
+  }
+
+  private def +(x:T, y:T) = implicitly[Numeric[T]] plus(x,y)
   private def plus(x:T, y:T) = implicitly[Numeric[T]] plus(x,y)
+  private def -(x:T, y:T) = implicitly[Numeric[T]] minus(x,y)
   private def minus(x:T, y:T) = implicitly[Numeric[T]] minus(x,y)
+  private def *(x:T, y:T) = implicitly[Numeric[T]] times(x,y)
   private def times(x:T, y:T) = implicitly[Numeric[T]] times(x,y)
-
-  //def cloneWith(backing: IndexedSeq[IndexedSeq[T]]):
 
   def +(m: S): S = {
     require(dimensions == m.dimensions)
@@ -50,39 +55,81 @@ abstract class NumericMatrix[@specialized T:Numeric, S <: NumericMatrix[T,S]] ex
     else
       (this ^ 2) ^ (i / 2)
   }
+
+  def det: T = {
+    require(dimensions._1 == dimensions._2)
+    dimensions match {
+      case (2,2) => plus(times(this(0,0),this(1,1)), times(this(0,1), this(1,0)))
+      case (3,3) => {
+        val
+        (a,b,c,
+         d,e,f,
+         g,h,i)
+        = (
+          this(0,0), this(0,1), this(0,2),
+          this(1,0), this(1,1), this(1,2),
+          this(2,0), this(2,1), this(2,2)
+          )
+
+        (a*e*i) + (b*f*g) + (c*d*h) - (c*e*g) - (a*f*h) - (b*d*i)
+      }
+      case _ => {
+        val tmp = removeRow(0)
+
+        row(0).zipWithIndex.map(p => {
+          (tmp.removeCol(p._2).det * p._1, p._2)
+        }).reduceLeft((a,b) => {
+          (
+            if((b._2 & 1) == 0)
+            a._1 + b._1
+          else
+            a._1 - b._1
+            , 0)
+        })._1
+      }
+    }
+  }
+
+
+
+  /*def inv:VectorMatrix[Double] = {
+    require(det != 0)
+
+    val Identity = new VectorMatrix((0 until dimensions._1).map(i => {
+      ((0 until i).toIndexedSeq.map(t => 0.0) :+ 1.0) ++ ((i + 1) until dimensions._1).map(t => 0.0)
+    }):_*)
+    //println(Identity)
+
+    var mat = new VectorMatrix(backing.map(r => r.map(c => c.toDouble)):_*)
+    mat = mat.appendColumns(Identity)
+
+
+    val (m,n) = mat.dimensions
+    for(k <- 0 until math.min(m,n)){
+      //val i_max = (k until m).map(i => (math.abs(mat(i,k)), i)).maxBy(_._1)._2
+      if(mat(k.toInt,k.toInt) == 0.0)
+        return null
+      //mat = mat.swapRows(i_max.toInt, k)
+      for(i <- (k+1) until m){
+        val t = mat(i,k) / mat(k,k)
+        for(j <- (k+1) until n){
+          mat = mat.updated(i,j, mat(i,j) - (mat(k,j) * t))
+        }
+        mat = mat.updated(i,k, 0.0)
+      }
+
+
+
+      //val tmp = mat(k,k)
+      //if(tmp != 0.0)
+      //  for(i <- k until n){
+      //    mat = mat.updated(k, i, mat(k,i) / tmp)
+      //  }
+
+    }
+    println("****")
+    println(mat)
+    println("****")
+    mat.subMatrix((0,m), (m,m))
+  }*/
 }
-
-class DoubleMatrix(back: IndexedSeq[IndexedSeq[Double]]) extends NumericMatrix[Double, DoubleMatrix] { //self: S =>
-  override val backing: IndexedSeq[IndexedSeq[Double]] = back
-
-  def this(x: Int, y: Int) = this(Array.ofDim[Double](x, y).map(_.toIndexedSeq).toIndexedSeq)
-
-  override def cloneWith(backing: IndexedSeq[IndexedSeq[Double]]):DoubleMatrix = new DoubleMatrix(backing)
-}
-
-class IntMatrix(back: IndexedSeq[IndexedSeq[Int]]) extends NumericMatrix[Int, IntMatrix] {
-  override val backing: IndexedSeq[IndexedSeq[Int]] = back
-
-  def this(x: Int, y: Int) = this(Array.ofDim[Int](x, y).map(_.toIndexedSeq).toIndexedSeq)
-
-  override def cloneWith(backing: IndexedSeq[IndexedSeq[Int]]): IntMatrix = new IntMatrix(backing)
-}
-
-class BigIntMatrix(back: IndexedSeq[IndexedSeq[BigInt]]) extends NumericMatrix[BigInt, BigIntMatrix] {
-  override val backing: IndexedSeq[IndexedSeq[BigInt]] = back
-
-  def this(x: Int, y: Int) = this(Array.ofDim[BigInt](x, y).map(_.toIndexedSeq).toIndexedSeq)
-
-  override def cloneWith(backing: IndexedSeq[IndexedSeq[BigInt]]): BigIntMatrix = new BigIntMatrix(backing)
-}
-
-class VectorMatrix[T:Numeric](back: IndexedSeq[IndexedSeq[T]]) extends NumericMatrix[T, VectorMatrix[T]]{
-  override val backing: IndexedSeq[IndexedSeq[T]] = back
-
-//  def this(x: Int, y: Int) = this(Vector.fill[T](x,y)(0.asInstanceOf[T]))//this(Array.ofDim[T](x, y)(ev).map(_.toIndexedSeq).toIndexedSeq)
-
-  def this(subs:IndexedSeq[T]*) = this(subs.toIndexedSeq)
-
-  override def cloneWith(backing: IndexedSeq[IndexedSeq[T]]): VectorMatrix[T] = new VectorMatrix[T](backing)
-}
-

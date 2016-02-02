@@ -1,6 +1,11 @@
 package p101
 
-object Main extends App{
+import breeze.linalg._
+import common.util.Memonize
+
+import common.TimedApp
+
+object Main extends TimedApp{
   /*
   If we are presented with the first k terms of a sequence it is impossible to say with certainty the value of the next term, as there are infinitely many polynomial functions that can model the sequence.
 
@@ -40,15 +45,58 @@ Find the sum of FITs for the BOPs.
       ret
     }
   }
-
-  def u_n(n:Int):Int = {
-    1 - n + n**2 - n**3 + n**4 - n**5 + n**6 - n**7 + n**8 - n**9 + n**10
+  implicit class RichDoublee(d:Double){
+    def round(precision:Double = 10E-10) :Double = {
+      val (floor, ceil) = (math.floor(d), math.ceil(d))
+      if(math.abs(d-floor) < precision)
+        floor
+      else if(math.abs(ceil-d) < precision)
+        ceil
+      else
+        d
+    }
   }
-  /*
-  def OP(k:Int,n:Int, op:(Int)=> Int):Int = {
 
-  }*/
+  def u_n(n:Double):Double = {
+    1 - n + math.pow(n,2) - math.pow(n, 3) + math.pow(n, 4) - math.pow(n, 5) + math.pow(n, 6) - math.pow(n, 7) + math.pow(n, 8) - math.pow(n, 9) + math.pow(n, 10)
+  }
+
+  val buildXMatrix = Memonize((n:Int) => {
+    new DenseMatrix(n, n, n.to(1, -1).flatMap(i => (n - 1).to(0, -1).map(pow => (i ** pow).toDouble)).toArray).t
+  })
+
+  val buildXMatrix2 = Memonize((x:Double, n:Int) => {
+    new DenseMatrix(n,1, (n-1).to(0,-1).map(p => math.pow(x,p)).toArray)
+  })
+
+  def buildEstimateFunction(seq:Array[Double]):(Double => Double) = {
+    val n = seq.length
+    val X = buildXMatrix(n)
+    val A = X
+
+    val y = new DenseMatrix(n,1,seq.reverse)
+
+    val tmp = A \ y
+
+    new ((Double) => Double) {
+      override def apply(x: Double): Double = {
+        val xs = buildXMatrix2(x,n)
+        val ans =  tmp.t * xs
+        ans(0,0)
+      }
+    }
+  }
 
   val n = 10
-  println((2 to n).map(i => u_n(i) + u_n(i) - u_n(i-1)).sum + u_n(1))
+
+  val master = (1 to n+1).map(u_n(_)).toArray
+
+  val FITs = (1 to n).map(t => {
+    val f = buildEstimateFunction(master.take(t))
+    //val err = (1 to t).map(i => math.pow(f(i)-master(i-1),2.0)).sum
+    f(t+1)
+  })
+
+  println(FITs.sum.round(10E-5).toLong)
+
 }
