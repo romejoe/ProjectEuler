@@ -59,5 +59,47 @@ package object common {
       ret
     }
 
+    def isEven = (i & 1) == 0
+    def isOdd = !isEven
+  }
+
+
+  implicit class RicherLong(l:Long){
+    def isEven = (l & 1) == 0
+    def isOdd = !isEven
+  }
+
+  object RicherBigInt{
+    val sqrtCache:scala.collection.mutable.Map[BigInt,BigInt] = mutable.Map()
+  }
+  implicit class RicherBigInt(bi:BigInt){
+    //var tmpSqrt:Option[BigInt] = None
+    // http://www.codecodex.com/wiki/Calculate_an_integer_square_root
+    def sqrt:BigInt = {
+     // if(!sqrtCache.contains(bi)) {
+      //if(tmpSqrt.isEmpty) {
+        def next(n: BigInt, i: BigInt): BigInt = (n + i / n) >> 1
+
+        val one = BigInt(1)
+
+        var n = one
+        var n1 = next(n, bi)
+
+        while ((n1 - n).abs > one) {
+          n = n1
+          n1 = next(n, bi)
+        }
+
+        while (n1 * n1 > bi) {
+          n1 -= one
+        }
+
+      //  sqrtCache.put(bi,n1)
+        //tmpSqrt = Some(n1)
+      //}
+      //sqrtCache(bi)
+      //tmpSqrt.get
+      n1
+    }
   }
 }

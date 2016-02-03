@@ -3,7 +3,7 @@ package common.numtheory
 import common.util.Memonize
 
 import scala.collection.mutable
-
+import common.RicherBigInt
 
 class Prime(N:Int) {
   val primes = {
@@ -128,8 +128,21 @@ object Prime {
     tmp * tmp == l
   }
 
+  def naiveIsSquare(l: BigInt): Boolean = {
+    val tmp: BigInt = l.sqrt
+    tmp * tmp == l
+  }
+
   @Experimental
   def digitalRoot(l: Long): Int = {
+    if (l < 10)
+      l.toInt
+    else {
+      digitalRoot(l.toString.toList.map(_.toString.toInt).sum)
+    }
+  }
+  @Experimental
+  def digitalRoot(l: BigInt): Int = {
     if (l < 10)
       l.toInt
     else {
@@ -145,6 +158,20 @@ object Prime {
         digitalRoot(l) match {
           case 0 | 1 | 4 | 7 | 9 => {
             naiveIsSquare(l)
+          }
+          case _ => false
+        }
+      }
+    }
+
+  @Experimental
+  def fastIsSquare(bi: BigInt): Boolean =
+    (bi & 11).toInt match {
+      case 2 | 3 | 7 | 8 => false
+      case _ => {
+        digitalRoot(bi) match {
+          case 0 | 1 | 4 | 7 | 9 => {
+            naiveIsSquare(bi)
           }
           case _ => false
         }
