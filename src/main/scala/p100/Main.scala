@@ -28,11 +28,11 @@ By finding the first arrangement to contain over 1012 = 1,000,000,000,000 discs 
     }
   })
 
-  def generateContinuedFraction(n: Long): Seq[Long] = {
-    Seq(0L, 1L) ++ (if ((n & 1) == 0) constSeq(n, 2L) :+ 3L else constSeq(n + 1, 2L))
+  def generateContinuedFraction(n: Long): Array[Long] = {
+    (Seq(0L, 1L) ++ (if ((n & 1) == 0) constSeq(n, 2L) :+ 3L else constSeq(n + 1, 2L))).toArray
   }
 
-  def continuedFractionToRational(continuedFraction: Seq[Long]): Rational = {
+  def continuedFractionToRational(continuedFraction: Array[Long]): Rational = {
     val rev = continuedFraction.reverse
     val base = rev.head
     rev.tail.foldLeft(Rational(base, 1))((s, a) => s.flip + a)
