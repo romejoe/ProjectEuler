@@ -14,7 +14,7 @@ libraryDependencies  ++= Seq(
   // It depends on LGPL code.
   "org.scalanlp" %% "breeze-viz" % "0.12",
 
-  "org.la4j" % "la4j" % "0.6.0"
+  "com.stantonj" % "primesieve" % "1.0-SNAPSHOT"
 )
 
 

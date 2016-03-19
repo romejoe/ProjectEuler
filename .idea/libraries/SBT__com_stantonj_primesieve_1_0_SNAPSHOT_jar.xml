@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: com.stantonj:primesieve:1.0-SNAPSHOT:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.stantonj/primesieve/jars/primesieve-1.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.stantonj/primesieve/docs/primesieve-1.0-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.stantonj/primesieve/srcs/primesieve-1.0-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

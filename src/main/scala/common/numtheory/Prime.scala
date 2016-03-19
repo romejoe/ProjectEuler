@@ -69,6 +69,74 @@ class Prime(N:Int) {
 
 }
 
+class LongPrime(N:Long) {
+  val primes = {
+
+    val foundPrimes = mutable.BitSet()
+
+    val is_prime:mutable.Set[Long] = mutable.Set[Long]()// ++ (2L to N)
+    var t = 2L
+    while(t <= N){
+      is_prime += t
+      t += 1
+    }
+    def findNextN(i:Int):Int = {
+      var tmp = i+1
+      while(tmp < N && !is_prime.contains(tmp)){
+        tmp += 1
+      }
+      tmp
+    }
+
+    var p = findNextN(1)
+    while(p < N){
+
+      var i = p
+      while(i < N){
+        is_prime -= i
+        i += p
+      }
+      foundPrimes += p
+      p = findNextN(p)
+    }
+
+    foundPrimes
+  }
+
+  /**
+    * Taken from https://gist.github.com/cslarsen/1635288
+    */
+  val EulerTotient:Int=>Int = Memonize((N:Int) => {
+
+    if(primes.contains(N))
+      N-1
+    else {
+      if ((N & 1) == 0) {
+        val m = N >> 1
+        if ((m & 1) == 1)
+          EulerTotient(m)
+        else
+          EulerTotient(m) << 1
+      }
+      else {
+        //(primes.filter(p => p < N && (N%p == 0)).map(1 - 1.0 / _).product*N).toInt
+
+        val m = primes.find(p => N % p == 0).get
+
+        val o = N / m
+        val d = Prime.binaryGcd(m, o).toInt
+
+        if (d == 1)
+          EulerTotient(m) * EulerTotient(o)
+        else
+          EulerTotient(m) * EulerTotient(o) * d / EulerTotient(d)
+      }
+    }
+
+  })
+
+}
+
 object Prime {
   val lessThan:Long => List[Long] = Memonize((i: Long) => {
     i match {

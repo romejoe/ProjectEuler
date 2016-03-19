@@ -10,6 +10,16 @@ package object common {
   implicit class RicherInt(i:Int){
     import RicherInt._
 
+    def **(e:Int):Int = {
+      var t = 0
+      var ret:Int = 1
+      while(t < e){
+        ret *= i
+        t += 1
+      }
+      ret
+    }
+
     def elems: Array[Int] = {
       if(!elemCache.contains(i)){
         var j = 0
@@ -64,7 +74,41 @@ package object common {
   }
 
 
+  object RicherLong{
+
+    val elemCache:scala.collection.mutable.Map[Long, Array[Long]] = mutable.Map()
+  }
   implicit class RicherLong(l:Long){
+    import RicherLong._
+    def **(e:Long):Long = {
+      var t = 0
+      var ret:Long = 1
+      while(t < e){
+        ret *= l
+        t += 1
+      }
+      ret
+    }
+
+    def elems: Array[Long] = {
+      if(!elemCache.contains(l)){
+        var j = 0
+        var tmp = l
+        var ret = List[Long]()
+
+        while(tmp != 0){
+          if((tmp & 1) != 0){
+            ret =  j :: ret
+          }
+          tmp >>= 1
+          j += 1
+        }
+
+        elemCache += (l -> ret.toArray)
+      }
+      elemCache(l)
+    }
+
     def isEven = (l & 1) == 0
     def isOdd = !isEven
   }

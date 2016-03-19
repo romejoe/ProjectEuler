@@ -77,11 +77,12 @@
     <orderEntry type="library" name="SBT: jfree:jfreechart:1.0.13:jar" level="project" />
     <orderEntry type="library" name="SBT: org.apache.xmlgraphics:xmlgraphics-commons:1.3.1:jar" level="project" />
     <orderEntry type="library" name="SBT: com.chuusai:shapeless_2.11:2.0.0:jar" level="project" />
-    <orderEntry type="library" name="SBT: org.la4j:la4j:0.6.0:jar" level="project" />
     <orderEntry type="library" name="SBT: org.scala-lang:scala-reflect:2.11.7:jar" level="project" />
     <orderEntry type="library" name="SBT: org.scalanlp:breeze-macros_2.11:0.12:jar" level="project" />
     <orderEntry type="library" name="SBT: org.scalanlp:breeze-viz_2.11:0.12:jar" level="project" />
     <orderEntry type="library" name="SBT: org.scalanlp:breeze_2.11:0.12:jar" level="project" />
     <orderEntry type="library" name="SBT: org.scalanlp:breeze-natives_2.11:0.12:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.stantonj:primesieve:1.0-SNAPSHOT:jar" level="project" />
+    <orderEntry type="library" name="SBT: net.java.dev.jna:jna:4.2.1:jar" level="project" />
   </component>
 </module>
